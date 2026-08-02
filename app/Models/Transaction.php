@@ -38,4 +38,8 @@ class Transaction extends Model
     public function toAccount() {
         return $this->belongsTo(Account::class, 'to_account_id');
     }
+
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
 }

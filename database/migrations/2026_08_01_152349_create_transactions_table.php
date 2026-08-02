@@ -43,8 +43,10 @@ return new class extends Migration
             $table->decimal('admin_fee', 15, 2)
                 ->default(0);
 
-            $table->string('category')
-                ->nullable();
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->text('description')
                 ->nullable();
