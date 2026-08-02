@@ -14,7 +14,7 @@ class Transaction extends Model
         'to_account_id',
         'amount',
         'admin_fee',
-        'category',
+        'category_id',
         'description',
         'transaction_date',
     ];
