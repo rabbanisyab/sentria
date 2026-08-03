@@ -63,7 +63,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3">
-                    <a href="{{ route('transactions.choose') }}"
+                    <a href="{{ route('transactions.index') }}"
                     class="px-5 py-2 rounded-lg border border-red-300 text-red-600 hover:bg-red-100 transition">
                         Cancel
                     </a>

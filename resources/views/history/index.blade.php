@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800">
-            Transactions
+            Transactions History
         </h2>
     </x-slot>
 
@@ -13,10 +13,6 @@
                     <h3 class="text-lg font-semibold">
                         Transaction History
                     </h3>
-                    <a href="{{ route('transactions.choose') }}"
-                       class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition">
-                        + Add Transaction
-                    </a>
                 </div>
 
                 @if($transactions->count() > 0)

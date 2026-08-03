@@ -12,19 +12,6 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with([
-            'account',
-            'category'
-        ])
-        ->where('user_id', auth()->id())
-        ->latest()
-        ->get();
-
-        return view('transactions.index', compact('transactions'));
-    }
-
-    public function chooseType()
-    {
         return view('transactions.choose');
     }
 
@@ -36,7 +23,7 @@ class TransactionController extends Controller
         $categories = Category::where('type', 'income')
             ->get();
 
-        return view('transactions.create-income', compact(
+        return view('transactions.income', compact(
             'accounts',
             'categories'
         ));
