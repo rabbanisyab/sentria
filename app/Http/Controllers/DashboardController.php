@@ -38,7 +38,7 @@ class DashboardController extends Controller
             ])
             ->where('user_id', auth()->id())
             ->latest()
-            ->take(5)
+            ->take(3)
             ->get();
 
         return view('dashboard', compact(
