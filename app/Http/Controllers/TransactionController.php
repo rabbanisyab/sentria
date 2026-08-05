@@ -53,20 +53,64 @@ class TransactionController extends Controller
                 $request->account_id
             );
 
-            $account->increment(
-                'balance',
-                $request->amount
-            );
+            $account->balance += $request->amount;
+            $account->save();
         });
 
         return redirect()
-            ->route('transactions.index')
+            ->route('history.index')
             ->with('success', 'Income successfully added.');
     }
 
     public function createExpense()
     {
-        //
+        $accounts = Account::where('user_id', auth()->id())->get();
+
+        $categories = Category::where('type', 'expense')->get();
+
+        return view('transactions.expense', compact(
+            'accounts',
+            'categories'
+        ));
+    }
+
+    public function storeExpense(Request $request)
+    {
+        $request->validate([
+            'account_id' => 'required|exists:accounts,id',
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric|min:1',
+            'description' => 'nullable|string',
+            'transaction_date' => 'required|date',
+        ]);
+
+        // Ambil account
+        $account = Account::findOrFail($request->account_id);
+        
+        if ($account->balance < $request->amount) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'amount' => 'Saldo akun tidak mencukupi.'
+                ]);
+        }
+
+        // Simpan transaksi
+        Transaction::create([
+            'user_id' => auth()->id(),
+            'type' => 'expense',
+            'account_id' => $request->account_id,
+            'category_id' => $request->category_id,
+            'amount' => $request->amount,
+            'description' => $request->description,
+            'transaction_date' => $request->transaction_date,
+        ]);
+
+        // Kurangi saldo account
+        $account->balance -= $request->amount;
+        $account->save();
+
+        return redirect()->route('history.index');
     }
 
     public function createTransfer()

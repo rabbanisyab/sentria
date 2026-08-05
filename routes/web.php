@@ -27,7 +27,9 @@ Route::prefix('transactions')->name('transactions.')->group(function () {
     Route::get('/income', [TransactionController::class, 'createIncome'])->name('create.income');
     Route::post('/income', [TransactionController::class, 'storeIncome'])->name('store.income');
 
-    Route::get('/create/expense', [TransactionController::class, 'createExpense'])->name('create.expense');
+    Route::get('/expense', [TransactionController::class, 'createExpense'])->name('create.expense');
+    Route::post('/expense', [TransactionController::class, 'storeExpense'])->name('store.expense');
+
     Route::get('/create/transfer', [TransactionController::class, 'createTransfer'])->name('create.transfer');
 });
 
