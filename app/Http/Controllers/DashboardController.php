@@ -30,6 +30,21 @@ class DashboardController extends Controller
             ->whereYear('transaction_date', $now->year)
             ->sum('amount');
 
+        $expenseByCategory = Transaction::selectRaw('
+                category_id,
+                SUM(amount) as total
+            ')
+            ->with('category')
+            ->where('user_id', auth()->id())
+            ->where('type', 'expense')
+            ->whereMonth('transaction_date', $now->month)
+            ->whereYear('transaction_date', $now->year)
+            ->groupBy('category_id')
+            ->orderByDesc('total')
+            ->get();
+
+        $topCategory = $expenseByCategory->first();
+
         $recentTransactions = Transaction::with([
                 'account',
                 'category',
@@ -47,6 +62,8 @@ class DashboardController extends Controller
             'income',
             'expense',
             'recentTransactions',
+            'expenseByCategory',
+            'topCategory',
             'now'
         ));
     }
