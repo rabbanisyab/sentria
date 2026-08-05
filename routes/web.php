@@ -30,7 +30,8 @@ Route::prefix('transactions')->name('transactions.')->group(function () {
     Route::get('/expense', [TransactionController::class, 'createExpense'])->name('create.expense');
     Route::post('/expense', [TransactionController::class, 'storeExpense'])->name('store.expense');
 
-    Route::get('/create/transfer', [TransactionController::class, 'createTransfer'])->name('create.transfer');
+    Route::get('/transfer', [TransactionController::class, 'createTransfer'])->name('create.transfer');
+    Route::post('/transfer', [TransactionController::class, 'storeTransfer'])->name('store.transfer');
 });
 
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');

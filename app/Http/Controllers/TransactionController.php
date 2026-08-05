@@ -17,11 +17,8 @@ class TransactionController extends Controller
 
     public function createIncome()
     {
-        $accounts = Account::where('user_id', auth()->id())
-            ->get();
-
-        $categories = Category::where('type', 'income')
-            ->get();
+        $accounts = Account::where('user_id', auth()->id())->get();
+        $categories = Category::where('type', 'income')->get();
 
         return view('transactions.income', compact(
             'accounts',
@@ -86,7 +83,7 @@ class TransactionController extends Controller
 
         // Ambil account
         $account = Account::findOrFail($request->account_id);
-        
+
         if ($account->balance < $request->amount) {
             return back()
                 ->withInput()
@@ -115,6 +112,56 @@ class TransactionController extends Controller
 
     public function createTransfer()
     {
-        //
+        $accounts = Account::where('user_id', auth()->id())->get();
+
+        return view('transactions.transfer', compact('accounts'));
+    }
+
+    public function storeTransfer(Request $request)
+    {
+        $request->validate([
+            'from_account_id' => 'required|exists:accounts,id',
+            'to_account_id' => 'required|exists:accounts,id',
+            'amount' => 'required|numeric|min:1',
+            'admin_fee' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
+            'transaction_date' => 'required|date',
+        ]);
+
+        if ($request->from_account_id == $request->to_account_id) {
+            return back()->withInput()->withErrors([
+                'to_account_id' => 'Akun tujuan tidak boleh sama dengan akun asal.'
+            ]);
+        }
+
+        $fromAccount = Account::findOrFail($request->from_account_id);
+        $toAccount = Account::findOrFail($request->to_account_id);
+        $totalDeduction = $request->amount + $request->admin_fee;
+
+        if ($fromAccount->balance < $totalDeduction) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'amount' => 'Saldo akun tidak mencukupi.'
+                ]);
+        }
+
+        Transaction::create([
+            'user_id' => auth()->id(),
+            'type' => 'transfer',
+            'from_account_id' => $request->from_account_id,
+            'to_account_id' => $request->to_account_id,
+            'amount' => $request->amount,
+            'admin_fee' => $request->admin_fee ?? 0,
+            'description' => $request->description,
+            'transaction_date' => $request->transaction_date,
+        ]);
+
+        $fromAccount->balance -= $totalDeduction;
+        $toAccount->balance += $request->amount;
+        $fromAccount->save();
+        $toAccount->save();  
+        
+        return redirect()->route('history.index');
     }
 }

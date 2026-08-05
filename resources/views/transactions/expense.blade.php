@@ -66,7 +66,7 @@
                     <label class="block text-sm font-medium text-gray-700">
                         Description
                     </label>
-                    <textarea class="mt-1 w-full rounded-lg border-gray-300" placeholder="Example: Print tugas makalah"></textarea>
+                    <textarea name="description" class="mt-1 w-full rounded-lg border-gray-300" placeholder="Example: Print tugas makalah"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3">

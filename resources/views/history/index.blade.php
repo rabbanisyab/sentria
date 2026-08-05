@@ -21,25 +21,59 @@
 
                 <div class="flex items-center justify-between border rounded-xl p-4">
                     <div>
-                        <h3 class="font-semibold text-gray-800">
-                            {{ $transaction->category->name ?? 'Transfer' }}
-                        </h3>
+                        @if($transaction->type == 'transfer')
+                            <h3 class="font-semibold text-gray-800">
+                                Transfer
+                            </h3>
+                            <p class="text-sm text-gray-500">
+                                {{ $transaction->fromAccount?->name }}
+                                →
+                                {{ $transaction->toAccount?->name }}
+                                •
+                                {{ $transaction->transaction_date }}
+                            </p>
 
-                        <p class="text-sm text-gray-500">
-                            {{ $transaction->account->name ?? '-' }}
-                            •
-                            {{ $transaction->transaction_date }}
-                        </p>
+                        @else
+                            <h3 class="font-semibold text-gray-800">
+                                {{ $transaction->category?->name }}
+                            </h3>
+
+                            @if($transaction->description)
+                                <p class="text-sm text-gray-700">
+                                    {{ $transaction->description }}
+                                </p>
+                            @endif
+
+                            <p class="text-sm text-gray-500">
+                                {{ $transaction->account->name }}
+                                •
+                                {{ $transaction->transaction_date }}
+                            </p>
+                        @endif
                     </div>
 
                     <div class="text-right">
-                        <p class="font-semibold
-                            {{ $transaction->type === 'income'
-                                ? 'text-green-600'
-                                : 'text-red-600' }}">
-                            {{ $transaction->type === 'income' ? '+' : '-' }}
-                            Rp {{ number_format($transaction->amount, 0, ',', '.') }}
-                        </p>
+                        @if($transaction->type == 'income')
+                            <p class="font-semibold text-green-600">
+                                + Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            </p>
+
+                        @elseif($transaction->type == 'expense')
+                            <p class="font-semibold text-red-600">
+                                - Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            </p>
+
+                        @else
+                            <p class="font-semibold text-blue-600">
+                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            </p>
+
+                            @if($transaction->admin_fee > 0)
+                                <p class="text-sm text-red-500">
+                                    Admin Fee -Rp {{ number_format($transaction->admin_fee, 0, ',', '.') }}
+                                </p>
+                            @endif
+                        @endif
                     </div>
                 </div>
 
