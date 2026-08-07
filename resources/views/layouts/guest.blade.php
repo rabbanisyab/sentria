@@ -8,14 +8,20 @@
     <title>{{ config('app.name', 'Sentria') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument+sans:400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|space-grotesk:500,600,700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>.font-display{font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;}</style>
 </head>
 
-<body class="bg-[#EAF4FB] font-sans antialiased">
-    <div class="min-h-screen flex items-center justify-center px-5">
-        <div class="min-h-screen flex items-center justify-center px-6">
+<body class="font-sans antialiased">
+    <div class="relative min-h-screen overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-violet-700">
+
+        <!-- Decorative glow -->
+        <div class="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-violet-400/20 blur-3xl"></div>
+
+        <div class="relative flex min-h-screen items-center justify-center px-6 py-12">
             {{ $slot }}
         </div>
     </div>

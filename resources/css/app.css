@@ -1,3 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    body {
+        @apply bg-canvas text-ink;
+    }
+
+    ::selection {
+        @apply bg-brand-200 text-brand-900;
+    }
+
+    /* Thin, quiet scrollbar for the sidebar */
+    .scroll-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scroll-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+    }
+}
+
+@layer components {
+    .card {
+        @apply bg-white rounded-2xl border border-black/5 shadow-card;
+    }
+
+    .field-label {
+        @apply block text-sm font-medium text-ink mb-1.5;
+    }
+
+    .field-input {
+        @apply w-full rounded-xl border-black/10 bg-white text-ink placeholder:text-ink-soft
+               focus:border-brand-500 focus:ring-brand-500/40 focus:ring-2 transition;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5
+               text-sm font-semibold text-white shadow-sm transition
+               hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:ring-offset-2;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-5 py-2.5
+               text-sm font-semibold text-ink-muted transition hover:bg-canvas hover:text-ink;
+    }
+
+    .btn-danger-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 px-5 py-2.5
+               text-sm font-semibold text-rose-600 transition hover:bg-rose-50;
+    }
+
+    .pill {
+        @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold;
+    }
+}
