@@ -7,9 +7,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\DashboardController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/login');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
