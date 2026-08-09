@@ -5,9 +5,12 @@
 
         {{-- Logo --}}
         <div class="h-20 flex items-center px-7 border-b border-gray-100">
-            <a href="{{ route('dashboard') }}"
-                class="text-2xl font-extrabold bg-gradient-to-r from-[#457B9D] to-[#6C63FF] bg-clip-text text-transparent">
-                Sentria
+            <a href="{{ route('dashboard') }}" class="flex items-center">
+                <img
+                    src="{{ asset('img/logo_sentria_light.png') }}"
+                    alt="Sentria"
+                    class="h-10 w-auto"
+                >
             </a>
         </div>
 

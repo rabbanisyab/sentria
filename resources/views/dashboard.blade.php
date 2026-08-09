@@ -35,10 +35,6 @@
 
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-            <!-- ================================================= -->
-            <!-- GREETING -->
-            <!-- ================================================= -->
-
             <section class="mb-6">
 
                 <p class="text-sm font-medium text-[#457B9D]">
@@ -54,11 +50,6 @@
                 </p>
 
             </section>
-
-
-            <!-- ================================================= -->
-            <!-- PERIOD -->
-            <!-- ================================================= -->
 
             <section class="mb-6 flex items-center justify-between">
 
@@ -91,11 +82,6 @@
                 </button>
 
             </section>
-
-
-            <!-- ================================================= -->
-            <!-- SUMMARY -->
-            <!-- ================================================= -->
 
             <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
 
@@ -208,16 +194,7 @@
             </section>
 
 
-            <!-- ================================================= -->
-            <!-- ACCOUNTS + RECENT TRANSACTIONS -->
-            <!-- ================================================= -->
-
             <section class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-
-
-                <!-- ================================================= -->
-                <!-- ACCOUNTS -->
-                <!-- ================================================= -->
 
                 <div class="lg:col-span-2 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
 
@@ -244,16 +221,17 @@
                     @if($accounts->count() > 0)
 
                         <!-- Desktop / Tablet -->
-                        <div class="hidden gap-4 sm:grid sm:grid-cols-2 xl:grid-cols-3">
+                        <div class="hidden gap-4 sm:grid sm:grid-cols-3 xl:grid-cols-4">
 
                             @foreach($accounts as $account)
 
                                 <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:shadow-md">
 
-                                    <div class="flex items-center justify-between">
+                                    {{-- Account Header --}}
+                                    <div class="flex items-center gap-3">
 
-                                        <!-- Icon -->
-                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl
+                                        {{-- Icon --}}
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
                                             @if($account->type == 'bank') bg-blue-50 text-[#457B9D]
                                             @elseif($account->type == 'ewallet') bg-purple-50 text-[#6D4AFF]
                                             @elseif($account->type == 'cash') bg-amber-50 text-amber-600
@@ -326,24 +304,27 @@
 
                                         </div>
 
+
+                                        {{-- Account Name --}}
+                                        <div class="min-w-0">
+                                            <p class="truncate text-sm font-semibold text-[#1D3557]">
+                                                {{ $account->name }}
+                                            </p>
+
+                                            <p class="mt-0.5 text-xs capitalize text-slate-400">
+                                                {{ str_replace('_', ' ', $account->type) }}
+                                            </p>
+                                        </div>
+
                                     </div>
 
 
-                                    <div class="mt-5">
-
-                                        <p class="text-sm font-semibold text-[#1D3557]">
-                                            {{ $account->name }}
+                                    {{-- Balance --}}
+                                    <div class="mt-6">
+                                        <p class="text-lg font-bold text-slate-800">
+                                            Rp {{ number_format($account->balance, 0, ',', '.') }}
                                         </p>
-
-                                        <p class="mt-1 text-xs capitalize text-slate-400">
-                                            {{ str_replace('_', ' ', $account->type) }}
-                                        </p>
-
                                     </div>
-
-                                    <p class="mt-4 text-lg font-bold text-slate-800">
-                                        Rp {{ number_format($account->balance, 0, ',', '.') }}
-                                    </p>
 
                                 </div>
 
