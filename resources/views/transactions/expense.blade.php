@@ -1,88 +1,315 @@
 <x-app-layout>
 
-<x-slot name="header">
-    <h2 class="text-xl font-semibold text-gray-800">
-        Add Expense
-    </h2>
-</x-slot>
+    <x-slot name="header">
+        <h2 class="text-xl font-semibold text-gray-800">
+            Add Expense
+        </h2>
+    </x-slot>
+
+    <div class="py-5 sm:py-8">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Back --}}
+            <a href="{{ route('transactions.index') }}"
+                class="inline-flex items-center gap-2
+                       text-sm font-medium text-gray-500
+                       hover:text-red-500
+                       transition mb-5">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="w-4 h-4">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 19.5L8.25 12l7.5-7.5" />
+
+                </svg>
+
+                Back to Transactions
+            </a>
 
 
-<div class="py-6">
-    <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <form action="{{ route('transactions.store.expense') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Account
-                    </label>
-                    <select name="account_id" class="mt-1 w-full rounded-lg border-gray-300">
-                    <option value="">
-                        Choose Account
-                    </option>
+            {{-- Header --}}
+            <div class="mb-6 sm:mb-8">
 
-                    @foreach($accounts as $account)
-                    <option value="{{ $account->id }}">
-                        {{ $account->name }}
-                    </option>
-                    @endforeach
+                <div class="flex items-center gap-4">
 
-                    </select>
-                </div>
+                    <div class="w-12 h-12 sm:w-14 sm:h-14
+                                shrink-0
+                                rounded-2xl
+                                bg-red-50
+                                text-red-500
+                                flex items-center justify-center">
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Category
-                    </label>
-                    <select name="category_id" class="mt-1 w-full rounded-lg border-gray-300">
-                    <option value="">
-                        Choose Category
-                    </option>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="w-6 h-6 sm:w-7 sm:h-7">
 
-                    @foreach($categories as $category)
-                    <option value="{{ $category->id }}">
-                        {{ $category->name }}
-                    </option>
-                    @endforeach
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 18V6m-6 6h12" />
 
-                    </select>
-                </div>
+                            <circle cx="12"
+                                cy="12"
+                                r="9" />
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Amount
-                    </label>
-                    <input type="number" name="amount" class="mt-1 w-full rounded-lg border-gray-300" placeholder="0">
-                </div>
+                        </svg>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Date
-                    </label>
-                    <input type="date" name="transaction_date" class="mt-1 w-full rounded-lg border-gray-300">
-                </div>
+                    </div>
 
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Description
-                    </label>
-                    <textarea name="description" class="mt-1 w-full rounded-lg border-gray-300" placeholder="Example: Print tugas makalah"></textarea>
-                </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
+                            Add Expense
+                        </h1>
 
-                <div class="flex justify-end gap-3">
-                    <a href="{{ route('transactions.index') }}"
-                    class="px-5 py-2 rounded-lg border border-red-300 text-red-600 hover:bg-red-100 transition">
-                        Cancel
-                    </a>
-
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg">
-                        Save Expense
-                    </button>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Record money going out of your account.
+                        </p>
+                    </div>
 
                 </div>
-            </form>
+
+            </div>
+
+
+            {{-- Form Card --}}
+            <div class="bg-white
+                        rounded-2xl
+                        shadow-sm
+                        border border-red-100
+                        overflow-hidden">
+
+                {{-- Top Accent --}}
+                <div class="h-1.5 w-full bg-red-500"></div>
+
+                {{-- Form Content --}}
+                <div class="p-5 sm:p-7">
+
+                    <form method="POST"
+                          action="{{ route('transactions.store.expense') }}"
+                          class="space-y-5">
+
+                        @csrf
+
+
+                        {{-- Account --}}
+                        <div>
+                            <label for="account_id"
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Account
+                            </label>
+
+                            <select
+                                id="account_id"
+                                name="account_id"
+                                required
+                                class="w-full rounded-xl
+                                       border-gray-200
+                                       bg-gray-50
+                                       focus:border-red-500
+                                       focus:ring-red-500
+                                       text-gray-700
+                                       py-3">
+
+                                <option value="">
+                                    Select account
+                                </option>
+
+                                @foreach($accounts as $account)
+                                    <option value="{{ $account->id }}"
+                                        {{ old('account_id') == $account->id ? 'selected' : '' }}>
+
+                                        {{ $account->name }}
+                                        — Rp {{ number_format($account->balance, 0, ',', '.') }}
+
+                                    </option>
+                                @endforeach
+
+                            </select>
+
+                            @error('account_id')
+                                <p class="mt-2 text-sm text-red-500">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+
+                        {{-- Category --}}
+                        <div>
+                            <label for="category_id"
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Category
+                            </label>
+
+                            <select
+                                id="category_id"
+                                name="category_id"
+                                required
+                                class="w-full rounded-xl
+                                       border-gray-200
+                                       bg-gray-50
+                                       focus:border-red-500
+                                       focus:ring-red-500
+                                       text-gray-700
+                                       py-3">
+
+                                <option value="">
+                                    Select category
+                                </option>
+
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}"
+                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>
+
+                                        {{ $category->name }}
+
+                                    </option>
+                                @endforeach
+
+                            </select>
+
+                            @error('category_id')
+                                <p class="mt-2 text-sm text-red-500">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+
+                        {{-- Amount --}}
+                        <div>
+                            <label for="amount"
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Amount
+                            </label>
+
+                            <div class="relative">
+
+                                <span class="absolute left-4 top-1/2
+                                             -translate-y-1/2
+                                             text-gray-500
+                                             font-medium">
+                                    Rp
+                                </span>
+
+                                <input
+                                    id="amount"
+                                    type="number"
+                                    name="amount"
+                                    value="{{ old('amount') }}"
+                                    min="1"
+                                    required
+                                    placeholder="0"
+                                    class="w-full rounded-xl
+                                           border-gray-200
+                                           bg-gray-50
+                                           focus:border-red-500
+                                           focus:ring-red-500
+                                           text-gray-700
+                                           py-3 pl-12">
+
+                            </div>
+
+                            @error('amount')
+                                <p class="mt-2 text-sm text-red-500">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+
+                        {{-- Date --}}
+                        <div>
+                            <label for="transaction_date"
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Date
+                            </label>
+
+                            <input
+                                id="transaction_date"
+                                type="date"
+                                name="transaction_date"
+                                value="{{ old('transaction_date', now()->format('Y-m-d')) }}"
+                                required
+                                class="w-full rounded-xl
+                                       border-gray-200
+                                       bg-gray-50
+                                       focus:border-red-500
+                                       focus:ring-red-500
+                                       text-gray-700
+                                       py-3">
+
+                            @error('transaction_date')
+                                <p class="mt-2 text-sm text-red-500">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+
+                        {{-- Description --}}
+                        <div>
+                            <label for="description"
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="3"
+                                placeholder="Example: Print tugas makalah"
+                                class="w-full rounded-xl
+                                       border-gray-200
+                                       bg-gray-50
+                                       focus:border-red-500
+                                       focus:ring-red-500
+                                       text-gray-700
+                                       py-3">{{ old('description') }}</textarea>
+
+                            @error('description')
+                                <p class="mt-2 text-sm text-red-500">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+
+                        {{-- Submit --}}
+                        <button
+                            type="submit"
+                            class="w-full
+                                   mt-2
+                                   py-3.5
+                                   rounded-xl
+                                   bg-red-500
+                                   hover:bg-red-600
+                                   text-white
+                                   font-semibold
+                                   shadow-sm
+                                   hover:shadow-md
+                                   transition">
+
+                            Add Expense
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
     </div>
-</div>
 
 </x-app-layout>
+
