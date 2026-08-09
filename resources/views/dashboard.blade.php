@@ -1,209 +1,675 @@
 <x-app-layout>
 
-    <x-slot name="header">Dashboard</x-slot>
-
-    @php
-        $palette = ['#5B42DB', '#3B82F6', '#D946EF', '#14B8A6', '#F59E0B', '#A78BFA', '#EC4899', '#22C55E'];
-
-        $buildDonut = function ($rows) use ($palette) {
-            $total = $rows->sum('total');
-            $stops = [];
-            $legend = [];
-            $cursor = 0;
-
-            foreach ($rows as $i => $row) {
-                if ($total <= 0) break;
-                $pct = $row->total / $total;
-                $deg = $pct * 360;
-                $color = $palette[$i % count($palette)];
-                $stops[] = "{$color} {$cursor}deg " . ($cursor + $deg) . 'deg';
-                $legend[] = [
-                    'name' => $row->category?->name ?? 'Lainnya',
-                    'total' => $row->total,
-                    'pct' => round($pct * 100),
-                    'color' => $color,
-                ];
-                $cursor += $deg;
-            }
-
-            return [
-                'gradient' => count($stops) ? implode(', ', $stops) : '#EDEBFA 0deg 360deg',
-                'legend' => $legend,
-                'total' => $total,
-            ];
-        };
-
-        $expenseDonut = $buildDonut($expenseByCategory);
-        $incomeDonut = $buildDonut($incomeByCategory);
-    @endphp
-
-    <div class="space-y-6" x-data="{ metric: 'expense' }">
-
-        {{-- Greeting --}}
-        <div>
-            <h1 class="font-display text-xl font-semibold text-ink">Halo, {{ auth()->user()->name }} 👋</h1>
-        </div>
-
-        {{-- Period selector --}}
-        <div class="card flex items-center justify-between px-3 py-2.5">
-            <a href="{{ route('dashboard', ['month' => $prevPeriod->month, 'year' => $prevPeriod->year]) }}"
-               class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition hover:bg-brand-50 hover:text-brand-600">
-                <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-
-            <div class="text-center">
-                <p class="text-[11px] font-medium uppercase tracking-wider text-ink-soft">Periode</p>
-                <p class="font-display text-sm font-semibold text-ink">
-                    {{ $periodStart->translatedFormat('d M Y') }} – {{ $periodEnd->translatedFormat('d M Y') }}
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-bold text-[#1D3557]">
+                    Dashboard
+                </h2>
+                <p class="text-sm text-slate-500">
+                    Manage your finances
                 </p>
             </div>
 
-            <a href="{{ route('dashboard', ['month' => $nextPeriod->month, 'year' => $nextPeriod->year]) }}"
-               class="flex h-9 w-9 items-center justify-center rounded-lg text-ink-muted transition hover:bg-brand-50 hover:text-brand-600">
-                <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('transactions.index') }}"
+                class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-[#1D3557] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#457B9D]">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="h-4 w-4">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+
+                Add Transaction
             </a>
         </div>
+    </x-slot>
 
-        {{-- Total / Income / Expense chips --}}
-        <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0">
-            <div class="w-40 shrink-0 rounded-2xl bg-gradient-to-br from-brand-900 via-brand-700 to-violet-600 p-4 text-white shadow-glow sm:w-auto">
-                <p class="text-[11px] uppercase tracking-wider text-brand-100/70">Total Aset</p>
-                <p class="mt-1.5 font-display text-lg font-semibold tabular-nums">Rp {{ number_format($totalAssets, 0, ',', '.') }}</p>
-            </div>
-            <div class="card w-40 shrink-0 p-4 sm:w-auto">
-                <p class="text-[11px] uppercase tracking-wider text-ink-soft">Income</p>
-                <p class="mt-1.5 font-display text-lg font-semibold tabular-nums text-emerald-600">Rp {{ number_format($income, 0, ',', '.') }}</p>
-            </div>
-            <div class="card w-40 shrink-0 p-4 sm:w-auto">
-                <p class="text-[11px] uppercase tracking-wider text-ink-soft">Expense</p>
-                <p class="mt-1.5 font-display text-lg font-semibold tabular-nums text-rose-600">Rp {{ number_format($expense, 0, ',', '.') }}</p>
-            </div>
-        </div>
 
-        {{-- Assets by account --}}
-        <div>
-            <div class="mb-3 flex items-center justify-between">
-                <h2 class="font-display text-base font-semibold text-ink">Assets by Account</h2>
-                <a href="{{ route('accounts.index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">Semua</a>
-            </div>
+    <div class="min-h-screen bg-gradient-to-br from-[#F5F8FF] via-white to-[#F7F3FF]">
 
-            <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
-                @forelse($accounts as $account)
-                    <div class="card flex w-36 shrink-0 flex-col gap-2 p-4">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                            @if($account->type == 'bank')
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke="currentColor" class="h-4.5 w-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9L12 4.5 20.25 9M4.5 10.5h15M6 10.5v7.5M10.5 10.5v7.5M15 10.5v7.5M19.5 10.5v7.5M3.75 18h16.5"/></svg>
-                            @elseif($account->type == 'ewallet')
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke="currentColor" class="h-4.5 w-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75A2.25 2.25 0 014.5 4.5h15A2.25 2.25 0 0121.75 6.75v10.5A2.25 2.25 0 0119.5 19.5h-15A2.25 2.25 0 012.25 17.25V6.75zm13.5 5.25h3"/></svg>
-                            @elseif($account->type == 'cash')
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke="currentColor" class="h-4.5 w-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.5h19.5v9H2.25v-9zm3 3h.008v.008H5.25V10.5z"/></svg>
-                            @else
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke="currentColor" class="h-4.5 w-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5v10.5H3.75V6.75zm1.5 3h13.5"/></svg>
-                            @endif
-                        </div>
-                        <p class="truncate text-sm font-medium text-ink">{{ $account->name }}</p>
-                        <p class="font-display text-sm font-semibold tabular-nums text-ink">Rp {{ number_format($account->balance, 0, ',', '.') }}</p>
-                    </div>
-                @empty
-                    <p class="py-4 text-sm text-ink-muted">Belum ada akun.</p>
-                @endforelse
-            </div>
-        </div>
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-        {{-- Analytics by category --}}
-        <div class="card p-5">
-            <div class="mb-4 flex items-center justify-between">
-                <h2 class="font-display text-base font-semibold text-ink">Analytics by Kategori</h2>
-                <div class="flex rounded-full bg-canvas p-1">
-                    <button
-                        @click="metric = 'income'"
-                        :class="metric === 'income' ? 'bg-white shadow-sm text-emerald-600' : 'text-ink-muted'"
-                        class="rounded-full px-3 py-1 text-xs font-semibold transition">Income</button>
-                    <button
-                        @click="metric = 'expense'"
-                        :class="metric === 'expense' ? 'bg-white shadow-sm text-rose-600' : 'text-ink-muted'"
-                        class="rounded-full px-3 py-1 text-xs font-semibold transition">Expense</button>
+            <!-- ================================================= -->
+            <!-- GREETING -->
+            <!-- ================================================= -->
+
+            <section class="mb-6">
+
+                <p class="text-sm font-medium text-[#457B9D]">
+                    Welcome back
+                </p>
+
+                <h1 class="mt-1 text-2xl font-bold tracking-tight text-[#1D3557] sm:text-3xl">
+                    Halo, {{ auth()->user()->name }}
+                </h1>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Here's your financial overview.
+                </p>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- PERIOD -->
+            <!-- ================================================= -->
+
+            <section class="mb-6 flex items-center justify-between">
+
+                <div>
+                    <p class="text-xs font-medium uppercase tracking-wider text-slate-400">
+                        Current Period
+                    </p>
+
+                    <p class="mt-1 text-lg font-bold text-[#1D3557]">
+                        {{ $now->translatedFormat('F Y') }}
+                    </p>
                 </div>
-            </div>
 
-            @foreach(['expense' => $expenseDonut, 'income' => $incomeDonut] as $key => $donut)
-                <div x-show="metric === '{{ $key }}'" x-cloak class="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
-                    <div
-                        class="h-40 w-40 shrink-0 rounded-full"
-                        style="background: conic-gradient({{ $donut['gradient'] }});"
-                    >
-                        <div class="flex h-full w-full items-center justify-center">
-                            <div class="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-white text-center shadow-sm">
-                                <span class="text-[10px] text-ink-soft">Total</span>
-                                <span class="font-display text-xs font-semibold text-ink">Rp {{ number_format($donut['total'], 0, ',', '.') }}</span>
-                            </div>
+                <button
+                    type="button"
+                    class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M8 7V3m8 4V3m-9 8h10M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" />
+                    </svg>
+
+                    This Month
+                </button>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- SUMMARY -->
+            <!-- ================================================= -->
+
+            <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+                <!-- TOTAL -->
+                <div class="rounded-2xl bg-gradient-to-br from-[#1D3557] to-[#457B9D] p-5 text-white shadow-lg shadow-[#457B9D]/15">
+
+                    <div class="flex items-center justify-between">
+
+                        <p class="text-sm font-medium text-blue-100">
+                            Total Assets
+                        </p>
+
+                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M3.75 7.5h16.5m-16.5 0A2.25 2.25 0 015.999 5.25h12.002A2.25 2.25 0 0120.25 7.5v9A2.25 2.25 0 0118.001 18.75H5.999A2.25 2.25 0 013.75 16.5v-9z" />
+                            </svg>
+
                         </div>
+
                     </div>
 
-                    <div class="w-full space-y-2">
-                        @forelse($donut['legend'] as $item)
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="flex items-center gap-2 text-ink-muted">
-                                    <span class="h-2.5 w-2.5 rounded-full" style="background:{{ $item['color'] }}"></span>
-                                    {{ $item['name'] }}
-                                </span>
-                                <span class="font-medium text-ink">{{ $item['pct'] }}%</span>
+                    <p class="mt-4 text-2xl font-bold sm:text-3xl">
+                        Rp {{ number_format($totalAssets, 0, ',', '.') }}
+                    </p>
+
+                </div>
+
+
+                <!-- INCOME -->
+                <div class="rounded-2xl border border-green-100 bg-white p-5 shadow-sm">
+
+                    <div class="flex items-center justify-between">
+
+                        <p class="text-sm font-medium text-slate-500">
+                            Income
+                        </p>
+
+                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-green-50 text-green-600">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 19.5V4.5m0 0l-6 6m6-6l6 6" />
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-2xl font-bold text-green-600 sm:text-3xl">
+                        Rp {{ number_format($income, 0, ',', '.') }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        This month
+                    </p>
+
+                </div>
+
+
+                <!-- EXPENSE -->
+                <div class="rounded-2xl border border-red-100 bg-white p-5 shadow-sm">
+
+                    <div class="flex items-center justify-between">
+
+                        <p class="text-sm font-medium text-slate-500">
+                            Expense
+                        </p>
+
+                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 4.5v15m0 0l6-6m-6 6l-6-6" />
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <p class="mt-4 text-2xl font-bold text-red-600 sm:text-3xl">
+                        Rp {{ number_format($expense, 0, ',', '.') }}
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-400">
+                        This month
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- ACCOUNTS + RECENT TRANSACTIONS -->
+            <!-- ================================================= -->
+
+            <section class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+
+                <!-- ================================================= -->
+                <!-- ACCOUNTS -->
+                <!-- ================================================= -->
+
+                <div class="lg:col-span-2 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
+
+                    <div class="mb-5 flex items-center justify-between">
+
+                        <div>
+                            <h2 class="text-lg font-bold text-[#1D3557]">
+                                Assets by Account
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+                                Your current account balances
+                            </p>
+                        </div>
+
+                        <a href="{{ route('accounts.index') }}"
+                            class="text-sm font-semibold text-[#457B9D] hover:text-[#6D4AFF]">
+                            View All
+                        </a>
+
+                    </div>
+
+
+                    @if($accounts->count() > 0)
+
+                        <!-- Desktop / Tablet -->
+                        <div class="hidden gap-4 sm:grid sm:grid-cols-2 xl:grid-cols-3">
+
+                            @foreach($accounts as $account)
+
+                                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:shadow-md">
+
+                                    <div class="flex items-center justify-between">
+
+                                        <!-- Icon -->
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl
+                                            @if($account->type == 'bank') bg-blue-50 text-[#457B9D]
+                                            @elseif($account->type == 'ewallet') bg-purple-50 text-[#6D4AFF]
+                                            @elseif($account->type == 'cash') bg-amber-50 text-amber-600
+                                            @else bg-indigo-50 text-indigo-600
+                                            @endif
+                                        ">
+
+                                            @if($account->type == 'bank')
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.8"
+                                                    stroke="currentColor"
+                                                    class="h-5 w-5">
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M3.75 9L12 4.5 20.25 9M4.5 10.5h15M6 10.5v7.5M10.5 10.5v7.5M15 10.5v7.5M19.5 10.5v7.5M3.75 18h16.5" />
+                                                </svg>
+
+                                            @elseif($account->type == 'ewallet')
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.8"
+                                                    stroke="currentColor"
+                                                    class="h-5 w-5">
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M2.25 6.75A2.25 2.25 0 014.5 4.5h15a2.25 2.25 0 012.25 2.25v10.5A2.25 2.25 0 0119.5 19.5h-15a2.25 2.25 0 01-2.25-2.25V6.75z" />
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12h3" />
+                                                </svg>
+
+                                            @elseif($account->type == 'cash')
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.8"
+                                                    stroke="currentColor"
+                                                    class="h-5 w-5">
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M3 7.5h18v9H3v-9z" />
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M6 10.5h.01M18 13.5h.01" />
+                                                </svg>
+
+                                            @else
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.8"
+                                                    stroke="currentColor"
+                                                    class="h-5 w-5">
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M3.75 6.75h16.5v10.5H3.75V6.75z" />
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M5.25 10.5h13.5" />
+                                                </svg>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="mt-5">
+
+                                        <p class="text-sm font-semibold text-[#1D3557]">
+                                            {{ $account->name }}
+                                        </p>
+
+                                        <p class="mt-1 text-xs capitalize text-slate-400">
+                                            {{ str_replace('_', ' ', $account->type) }}
+                                        </p>
+
+                                    </div>
+
+                                    <p class="mt-4 text-lg font-bold text-slate-800">
+                                        Rp {{ number_format($account->balance, 0, ',', '.') }}
+                                    </p>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+
+                        <!-- Mobile horizontal scroll -->
+                        <div class="flex gap-3 overflow-x-auto pb-2 sm:hidden">
+
+                            @foreach($accounts as $account)
+
+                                <div class="min-w-[180px] rounded-2xl border border-slate-100 bg-slate-50 p-4">
+
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-xl
+                                        @if($account->type == 'bank') bg-blue-50 text-[#457B9D]
+                                        @elseif($account->type == 'ewallet') bg-purple-50 text-[#6D4AFF]
+                                        @elseif($account->type == 'cash') bg-amber-50 text-amber-600
+                                        @else bg-indigo-50 text-indigo-600
+                                        @endif
+                                    ">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.8"
+                                            stroke="currentColor"
+                                            class="h-5 w-5">
+                                            <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                            <path stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M3 10h18" />
+                                        </svg>
+
+                                    </div>
+
+                                    <p class="mt-4 text-sm font-semibold text-[#1D3557]">
+                                        {{ $account->name }}
+                                    </p>
+
+                                    <p class="mt-1 text-xs capitalize text-slate-400">
+                                        {{ str_replace('_', ' ', $account->type) }}
+                                    </p>
+
+                                    <p class="mt-3 text-base font-bold text-slate-800">
+                                        Rp {{ number_format($account->balance, 0, ',', '.') }}
+                                    </p>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    @else
+
+                        <div class="rounded-2xl border border-dashed border-slate-200 py-12 text-center">
+
+                            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-[#457B9D]">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-6 w-6">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.75 7.5h16.5m-16.5 0A2.25 2.25 0 015.999 5.25h12.002A2.25 2.25 0 0120.25 7.5v9A2.25 2.25 0 0118.001 18.75H5.999A2.25 2.25 0 013.75 16.5v-9z" />
+                                </svg>
+
                             </div>
+
+                            <p class="mt-4 font-semibold text-[#1D3557]">
+                                No accounts yet
+                            </p>
+
+                            <p class="mt-1 text-sm text-slate-400">
+                                Add an account to start tracking your assets.
+                            </p>
+
+                            <a href="{{ route('accounts.create') }}"
+                                class="mt-5 inline-flex rounded-xl bg-[#457B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1D3557]">
+                                Add Account
+                            </a>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- RECENT TRANSACTIONS -->
+                <!-- ================================================= -->
+
+                <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
+
+                    <div class="mb-5 flex items-center justify-between">
+
+                        <div>
+                            <h2 class="text-lg font-bold text-[#1D3557]">
+                                Recent Transactions
+                            </h2>
+
+                            <p class="mt-1 text-sm text-slate-400">
+                                Latest activity
+                            </p>
+                        </div>
+
+                        <a href="{{ route('history.index') }}"
+                            class="text-sm font-semibold text-[#457B9D] hover:text-[#6D4AFF]">
+                            View All
+                        </a>
+
+                    </div>
+
+
+                    <div class="space-y-3">
+
+                        @forelse($recentTransactions as $transaction)
+
+                            <div class="rounded-xl border border-slate-100 p-3.5">
+
+                                <div class="flex items-start gap-3">
+
+                                    <!-- Type icon -->
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl
+                                        @if($transaction->type == 'income') bg-green-50 text-green-600
+                                        @elseif($transaction->type == 'expense') bg-red-50 text-red-600
+                                        @else bg-blue-50 text-[#457B9D]
+                                        @endif
+                                    ">
+
+                                        @if($transaction->type == 'income')
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke="currentColor"
+                                                class="h-4 w-4">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M12 19.5V4.5m0 0l-6 6m6-6l6 6" />
+                                            </svg>
+
+                                        @elseif($transaction->type == 'expense')
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke="currentColor"
+                                                class="h-4 w-4">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M12 4.5v15m0 0l6-6m-6 6l-6-6" />
+                                            </svg>
+
+                                        @else
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="2"
+                                                stroke="currentColor"
+                                                class="h-4 w-4">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M7.5 7.5h9m0 0v9m0-9L7.5 16.5" />
+                                            </svg>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    <div class="min-w-0 flex-1">
+
+                                        @if($transaction->type == 'transfer')
+
+                                            <p class="truncate text-sm font-semibold text-[#1D3557]">
+                                                {{ $transaction->fromAccount?->name }}
+                                                →
+                                                {{ $transaction->toAccount?->name }}
+                                            </p>
+
+                                            <p class="mt-1 text-xs text-slate-400">
+                                                Transfer
+                                            </p>
+
+                                        @else
+
+                                            <p class="truncate text-sm font-semibold text-[#1D3557]">
+                                                {{ $transaction->category?->name ?? ucfirst($transaction->type) }}
+                                            </p>
+
+                                            <p class="mt-1 truncate text-xs text-slate-400">
+                                                {{ $transaction->account?->name }}
+                                            </p>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    <div class="shrink-0 text-right">
+
+                                        @if($transaction->type == 'income')
+
+                                            <p class="text-sm font-bold text-green-600">
+                                                +Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </p>
+
+                                        @elseif($transaction->type == 'expense')
+
+                                            <p class="text-sm font-bold text-red-600">
+                                                -Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </p>
+
+                                        @else
+
+                                            <p class="text-sm font-bold text-[#457B9D]">
+                                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                            </p>
+
+                                        @endif
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         @empty
-                            <p class="text-sm text-ink-muted">Belum ada data {{ $key == 'income' ? 'pemasukan' : 'pengeluaran' }} periode ini.</p>
+
+                            <div class="py-10 text-center">
+
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-6 w-6">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M9 12h6m-6 4h6m2.25 4.5H6.75A2.25 2.25 0 014.5 18.25V5.75A2.25 2.25 0 016.75 3.5h7.5l5.25 5.25v9.5a2.25 2.25 0 01-2.25 2.25z" />
+                                    </svg>
+
+                                </div>
+
+                                <p class="mt-3 text-sm font-medium text-slate-500">
+                                    No transactions yet
+                                </p>
+
+                                <p class="mt-1 text-xs text-slate-400">
+                                    Your latest activity will appear here.
+                                </p>
+
+                            </div>
+
                         @endforelse
+
                     </div>
+
                 </div>
-            @endforeach
-        </div>
 
-        {{-- Recent Transactions --}}
-        <div class="card p-5">
-            <div class="mb-4 flex items-center justify-between">
-                <h2 class="font-display text-base font-semibold text-ink">Recent Transaction</h2>
-                <a href="{{ route('history.index') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">Lihat semua</a>
-            </div>
+            </section>
 
-            <div class="space-y-3">
-                @forelse($recentTransactions as $transaction)
-                    <div class="flex items-center gap-3 rounded-xl border border-black/5 p-3.5">
-                        @if($transaction->type == 'income')
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                                <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
-                            </span>
-                        @elseif($transaction->type == 'expense')
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600">
-                                <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m0 0-6-6m6 6 6-6"/></svg>
-                            </span>
-                        @else
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
-                                <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h11l-3-3M17 17H6l3 3"/></svg>
-                            </span>
-                        @endif
 
-                        <div class="min-w-0 flex-1">
-                            @if($transaction->type == 'transfer')
-                                <p class="truncate text-sm font-medium text-ink">{{ $transaction->fromAccount?->name }} → {{ $transaction->toAccount?->name }}</p>
-                            @else
-                                <p class="truncate text-sm font-medium text-ink">{{ $transaction->category?->name }}</p>
-                                @if($transaction->description)
-                                    <p class="truncate text-xs text-ink-muted">{{ $transaction->description }}</p>
-                                @endif
-                            @endif
+            <!-- ================================================= -->
+            <!-- ANALYTICS -->
+            <!-- ================================================= -->
+
+            <section class="mt-6 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
+
+                <div class="mb-6 flex items-center justify-between">
+
+                    <div>
+                        <h2 class="text-lg font-bold text-[#1D3557]">
+                            Analytics by Category
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-400">
+                            Understand where your money goes
+                        </p>
+                    </div>
+
+                    <a href="#"
+                        class="text-sm font-semibold text-[#457B9D] hover:text-[#6D4AFF]">
+                        View Analytics
+                    </a>
+
+                </div>
+
+
+                <!-- Temporary analytics visual -->
+                <div class="flex min-h-[220px] items-center justify-center rounded-2xl bg-gradient-to-br from-[#F5F8FF] to-[#F7F3FF]">
+
+                    <div class="text-center">
+
+                        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-[18px] border-[#457B9D] border-r-[#6D4AFF] border-b-purple-200">
+
+                            <div class="h-5 w-5 rounded-full bg-white"></div>
+
                         </div>
 
-                        @if($transaction->type == 'income')
-                            <p class="shrink-0 font-display text-sm font-semibold tabular-nums text-emerald-600">+Rp {{ number_format($transaction->amount, 0, ',', '.') }}</p>
-                        @elseif($transaction->type == 'expense')
-                            <p class="shrink-0 font-display text-sm font-semibold tabular-nums text-rose-600">-Rp {{ number_format($transaction->amount, 0, ',', '.') }}</p>
-                        @else
-                            <p class="shrink-0 font-display text-sm font-semibold tabular-nums text-brand-600">Rp {{ number_format($transaction->amount, 0, ',', '.') }}</p>
-                        @endif
+                        <p class="mt-4 font-semibold text-[#1D3557]">
+                            Income & Expense Analytics
+                        </p>
+
+                        <p class="mt-1 text-sm text-slate-400">
+                            Category breakdown will appear here.
+                        </p>
+
                     </div>
-                @empty
-                    <p class="py-6 text-center text-sm text-ink-muted">Belum ada transaksi.</p>
-                @endforelse
-            </div>
+
+                </div>
+
+            </section>
+
         </div>
     </div>
 

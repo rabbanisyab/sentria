@@ -1,109 +1,298 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+<nav class="bg-white border-gray-200">
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('accounts.index')" :active="request()->routeIs('accounts.*')">
-                        {{ __('Accounts') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')">
-                        {{ __('Transactions') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('history.index')" :active="request()->routeIs('history.*')">
-                        {{ __('History') }}
-                    </x-nav-link>
-                </div>
-            </div>
+    {{-- ================= DESKTOP SIDEBAR ================= --}}
+    <aside class="hidden md:flex fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex-col">
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+        {{-- Logo --}}
+        <div class="h-20 flex items-center px-7 border-b border-gray-100">
+            <a href="{{ route('dashboard') }}"
+                class="text-2xl font-extrabold bg-gradient-to-r from-[#457B9D] to-[#6C63FF] bg-clip-text text-transparent">
+                Sentria
+            </a>
+        </div>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
+        {{-- Navigation --}}
+        <div class="flex-1 px-4 py-6">
 
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+            <p class="px-3 mb-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Menu
+            </p>
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
+            <div class="space-y-2">
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                {{-- Dashboard --}}
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('dashboard')
+                        ? 'bg-[#E8EAFD] text-[#457B9D] font-semibold'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-[#457B9D]' }}">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 12l9-9 9 9M5 10v10h14V10M9 20v-6h6v6"/>
                     </svg>
+
+                    <span>Dashboard</span>
+                </a>
+
+
+                {{-- Transactions --}}
+                <a href="{{ route('transactions.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('transactions.*')
+                        ? 'bg-[#E8EAFD] text-[#457B9D] font-semibold'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-[#457B9D]' }}">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7 7h10M7 12h10M7 17h6"/>
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M4 4h16v16H4z"/>
+                    </svg>
+
+                    <span>Transactions</span>
+                </a>
+
+
+                {{-- History --}}
+                <a href="{{ route('history.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('history.*')
+                        ? 'bg-[#E8EAFD] text-[#457B9D] font-semibold'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-[#457B9D]' }}">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 8v4l3 2"/>
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M20 12a8 8 0 11-16 0 8 8 0 0116 0z"/>
+                    </svg>
+
+                    <span>History</span>
+                </a>
+
+
+                {{-- Accounts --}}
+                <a href="{{ route('accounts.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('accounts.*')
+                        ? 'bg-[#E8EAFD] text-[#457B9D] font-semibold'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-[#457B9D]' }}">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 10h18M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18M4 7l8-4 8 4"/>
+                    </svg>
+
+                    <span>Accounts</span>
+                </a>
+
+            </div>
+        </div>
+
+
+        {{-- User --}}
+        <div class="border-t border-gray-100 p-4">
+
+            {{-- Profile --}}
+            <a href="{{ route('profile.edit') }}"
+                class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-50 transition">
+
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#457B9D] to-[#6C63FF] text-white flex items-center justify-center font-semibold">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-gray-800 truncate">
+                        {{ auth()->user()->name }}
+                    </p>
+
+                    <p class="text-xs text-gray-500 truncate">
+                        {{ auth()->user()->email }}
+                    </p>
+                </div>
+            </a>
+
+            {{-- Logout --}}
+            <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                @csrf
+
+                <button
+                    type="submit"
+                    class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-red-50 hover:text-red-500 transition">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12H3m0 0l4-4m-4 4l4 4"/>
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M10 5V4a1 1 0 011-1h7a1 1 0 011 1v16a1 1 0 01-1 1h-7a1 1 0 01-1-1v-1"/>
+                    </svg>
+
+                    <span>Logout</span>
                 </button>
-            </div>
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+    {{-- ================= MOBILE BOTTOM NAVIGATION ================= --}}
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
+
+        <div class="grid grid-cols-5 h-16">
+
+            {{-- Dashboard --}}
+            <a href="{{ route('dashboard') }}"
+                class="flex flex-col items-center justify-center gap-1
+                {{ request()->routeIs('dashboard')
+                    ? 'text-[#457B9D]'
+                    : 'text-gray-400' }}">
+
+                <svg class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 12l9-9 9 9M5 10v10h14V10M9 20v-6h6v6"/>
+                </svg>
+
+                <span class="text-[11px] font-medium">
+                    Home
+                </span>
+            </a>
+
+
+            {{-- Transactions --}}
+            <a href="{{ route('transactions.index') }}"
+                class="flex flex-col items-center justify-center gap-1
+                {{ request()->routeIs('transactions.*')
+                    ? 'text-[#457B9D]'
+                    : 'text-gray-400' }}">
+
+                <svg class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7 7h10M7 12h10M7 17h6"/>
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M4 4h16v16H4z"/>
+                </svg>
+
+                <span class="text-[11px] font-medium">
+                    Transaction
+                </span>
+            </a>
+
+
+            {{-- History --}}
+            <a href="{{ route('history.index') }}"
+                class="flex flex-col items-center justify-center gap-1
+                {{ request()->routeIs('history.*')
+                    ? 'text-[#457B9D]'
+                    : 'text-gray-400' }}">
+
+                <svg class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 8v4l3 2"/>
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M20 12a8 8 0 11-16 0 8 8 0 0116 0z"/>
+                </svg>
+
+                <span class="text-[11px] font-medium">
+                    History
+                </span>
+            </a>
+
+
+            {{-- Accounts --}}
+            <a href="{{ route('accounts.index') }}"
+                class="flex flex-col items-center justify-center gap-1
+                {{ request()->routeIs('accounts.*')
+                    ? 'text-[#457B9D]'
+                    : 'text-gray-400' }}">
+
+                <svg class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 10h18M5 10v9M9 10v9M15 10v9M19 10v9M3 19h18M4 7l8-4 8 4"/>
+                </svg>
+
+                <span class="text-[11px] font-medium">
+                    Accounts
+                </span>
+            </a>
+
+            {{-- Profile --}}
+            <a href="{{ route('profile.edit') }}"
+                class="flex flex-col items-center justify-center gap-1
+                {{ request()->routeIs('profile.*')
+                    ? 'text-[#6C63FF]'
+                    : 'text-gray-400' }}">
+
+                <svg class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 19a6 6 0 00-6 0"/>
+                    <circle cx="12" cy="8" r="4"/>
+                </svg>
+
+                <span class="text-[11px] font-medium">
+                    Profile
+                </span>
+
+            </a>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-    </div>
 </nav>
