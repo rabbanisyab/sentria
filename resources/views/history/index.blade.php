@@ -104,21 +104,25 @@
             {{-- FILTER CARD --}}
             {{-- ===================================================== --}}
 
-            <div class="relative overflow-hidden
+            <div class="relative overflow-visible
                         bg-white
                         rounded-2xl
                         border border-gray-100
                         shadow-sm
-                        mb-7">
+                        mb-7
+                        z-30">
 
-                {{-- Purple / Blue top accent --}}
+                {{-- Blue / Purple Top Accent --}}
                 <div class="h-1.5 bg-gradient-to-r
                             from-[#457B9D]
-                            to-[#6C63FF]">
+                            to-[#6C63FF]
+                            rounded-t-2xl">
                 </div>
+
 
                 <div class="p-4 sm:p-5">
 
+                    {{-- Filter Header --}}
                     <div class="flex items-center gap-2 mb-4">
 
                         <svg
@@ -143,134 +147,230 @@
                     </div>
 
 
+                    {{-- Filters --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                        {{-- MONTH --}}
-                        <div>
+
+                        {{-- ================================================= --}}
+                        {{-- MONTH DROPDOWN --}}
+                        {{-- ================================================= --}}
+
+                        <div class="relative">
 
                             <label
-                                for="monthFilter"
-                                class="block text-xs font-semibold text-gray-500 mb-1.5">
-                                Bulan
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Month
                             </label>
 
-                            <div class="relative">
 
-                                <select
-                                    id="monthFilter"
-                                    class="w-full appearance-none
-                                           rounded-xl
-                                           border border-gray-200
-                                           bg-gray-50
-                                           px-4 py-3 pr-10
-                                           text-sm font-medium text-gray-700
-                                           transition
-                                           focus:border-[#457B9D]
-                                           focus:ring-2
-                                           focus:ring-[#457B9D]/20
-                                           focus:outline-none">
+                            <button
+                                type="button"
+                                id="monthDropdownButton"
+                                class="w-full
+                                    flex items-center justify-between
+                                    rounded-xl
+                                    border border-gray-200
+                                    bg-white
+                                    px-4 py-3
+                                    text-sm font-medium text-gray-700
+                                    shadow-sm
+                                    transition-all
+                                    hover:border-gray-300
+                                    focus:outline-none
+                                    focus:border-[#457B9D]
+                                    focus:ring-2
+                                    focus:ring-[#457B9D]/20">
 
-                                    <option value="all">
-                                        Semua Bulan
-                                    </option>
-
-                                    @foreach($monthNames as $number => $name)
-
-                                        <option value="{{ $number }}">
-                                            {{ $name }}
-                                        </option>
-
-                                    @endforeach
-
-                                </select>
+                                <span id="monthDropdownText">
+                                    All Months
+                                </span>
 
 
-                                <div class="pointer-events-none
-                                            absolute inset-y-0 right-3
-                                            flex items-center">
+                                <svg
+                                    id="monthDropdownArrow"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="2"
+                                    stroke="currentColor"
+                                    class="w-4 h-4 text-gray-400
+                                        transition-transform duration-200">
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="2"
-                                        stroke="currentColor"
-                                        class="w-4 h-4 text-gray-400">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m6 9 6 6 6-6" />
 
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="m19 9-7 7-7-7" />
+                                </svg>
 
-                                    </svg>
+                            </button>
+
+
+                            {{-- Month Options --}}
+                            <div
+                                id="monthDropdown"
+                                class="hidden
+                                    absolute
+                                    left-0
+                                    right-0
+                                    top-full
+                                    mt-2
+                                    bg-white
+                                    border border-gray-100
+                                    rounded-xl
+                                    shadow-lg
+                                    overflow-hidden
+                                    z-50">
+
+                                <div
+                                    data-value="all"
+                                    data-label="All Months"
+                                    class="month-option
+                                        px-4 py-3
+                                        text-sm font-medium
+                                        text-gray-700
+                                        cursor-pointer
+                                        transition
+                                        hover:bg-[#F0F7FA]
+                                        hover:text-[#457B9D]">
+
+                                    All Months
 
                                 </div>
+
+
+                                @foreach($monthNames as $number => $name)
+
+                                    <div
+                                        data-value="{{ $number }}"
+                                        data-label="{{ $name }}"
+                                        class="month-option
+                                            px-4 py-3
+                                            text-sm font-medium
+                                            text-gray-700
+                                            cursor-pointer
+                                            transition
+                                            hover:bg-[#F0F7FA]
+                                            hover:text-[#457B9D]">
+
+                                        {{ $name }}
+
+                                    </div>
+
+                                @endforeach
 
                             </div>
 
                         </div>
 
 
-                        {{-- YEAR --}}
-                        <div>
+                        {{-- ================================================= --}}
+                        {{-- YEAR DROPDOWN --}}
+                        {{-- ================================================= --}}
+
+                        <div class="relative">
 
                             <label
-                                for="yearFilter"
-                                class="block text-xs font-semibold text-gray-500 mb-1.5">
-                                Tahun
+                                class="block text-sm font-semibold text-gray-700 mb-2">
+                                Year
                             </label>
 
-                            <div class="relative">
 
-                                <select
-                                    id="yearFilter"
-                                    class="w-full appearance-none
-                                           rounded-xl
-                                           border border-gray-200
-                                           bg-gray-50
-                                           px-4 py-3 pr-10
-                                           text-sm font-medium text-gray-700
-                                           transition
-                                           focus:border-[#457B9D]
-                                           focus:ring-2
-                                           focus:ring-[#457B9D]/20
-                                           focus:outline-none">
+                            <button
+                                type="button"
+                                id="yearDropdownButton"
+                                class="w-full
+                                    flex items-center justify-between
+                                    rounded-xl
+                                    border border-gray-200
+                                    bg-white
+                                    px-4 py-3
+                                    text-sm font-medium text-gray-700
+                                    shadow-sm
+                                    transition-all
+                                    hover:border-gray-300
+                                    focus:outline-none
+                                    focus:border-[#457B9D]
+                                    focus:ring-2
+                                    focus:ring-[#457B9D]/20">
 
-                                    <option value="all">
-                                        Semua Tahun
-                                    </option>
-
-                                    @foreach($availableYears as $year)
-
-                                        <option value="{{ $year }}">
-                                            {{ $year }}
-                                        </option>
-
-                                    @endforeach
-
-                                </select>
+                                <span id="yearDropdownText">
+                                    All Years
+                                </span>
 
 
-                                <div class="pointer-events-none
-                                            absolute inset-y-0 right-3
-                                            flex items-center">
+                                <svg
+                                    id="yearDropdownArrow"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="2"
+                                    stroke="currentColor"
+                                    class="w-4 h-4 text-gray-400
+                                        transition-transform duration-200">
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="2"
-                                        stroke="currentColor"
-                                        class="w-4 h-4 text-gray-400">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m6 9 6 6 6-6" />
 
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="m19 9-7 7-7-7" />
+                                </svg>
 
-                                    </svg>
+                            </button>
+
+
+                            {{-- Year Options --}}
+                            <div
+                                id="yearDropdown"
+                                class="hidden
+                                    absolute
+                                    left-0
+                                    right-0
+                                    top-full
+                                    mt-2
+                                    bg-white
+                                    border border-gray-100
+                                    rounded-xl
+                                    shadow-lg
+                                    overflow-hidden
+                                    z-50">
+
+                                <div
+                                    data-value="all"
+                                    data-label="All Years"
+                                    class="year-option
+                                        px-4 py-3
+                                        text-sm font-medium
+                                        text-gray-700
+                                        cursor-pointer
+                                        transition
+                                        hover:bg-[#F0F7FA]
+                                        hover:text-[#457B9D]">
+
+                                    All Years
 
                                 </div>
+
+
+                                @foreach($availableYears as $year)
+
+                                    <div
+                                        data-value="{{ $year }}"
+                                        data-label="{{ $year }}"
+                                        class="year-option
+                                            px-4 py-3
+                                            text-sm font-medium
+                                            text-gray-700
+                                            cursor-pointer
+                                            transition
+                                            hover:bg-[#F0F7FA]
+                                            hover:text-[#457B9D]">
+
+                                        {{ $year }}
+
+                                    </div>
+
+                                @endforeach
 
                             </div>
 
@@ -281,7 +381,6 @@
                 </div>
 
             </div>
-
 
             {{-- ===================================================== --}}
             {{-- TRANSACTION LIST --}}
@@ -794,94 +893,346 @@
 
     </div>
 
-
     {{-- ============================================================= --}}
     {{-- FILTER SCRIPT --}}
     {{-- ============================================================= --}}
 
     <script>
 
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-            const monthFilter = document.getElementById('monthFilter');
-            const yearFilter = document.getElementById('yearFilter');
+        /* =========================================================
+        ELEMENTS
+        ========================================================= */
 
-            const dateGroups = document.querySelectorAll(
-                '.transaction-date-group'
-            );
+        const monthButton = document.getElementById(
+            'monthDropdownButton'
+        );
 
-            const noFilterResult =
-                document.getElementById('noFilterResult');
+        const monthDropdown = document.getElementById(
+            'monthDropdown'
+        );
+
+        const monthText = document.getElementById(
+            'monthDropdownText'
+        );
+
+        const monthArrow = document.getElementById(
+            'monthDropdownArrow'
+        );
 
 
-            if (!monthFilter || !yearFilter) {
-                return;
+        const yearButton = document.getElementById(
+            'yearDropdownButton'
+        );
+
+        const yearDropdown = document.getElementById(
+            'yearDropdown'
+        );
+
+        const yearText = document.getElementById(
+            'yearDropdownText'
+        );
+
+        const yearArrow = document.getElementById(
+            'yearDropdownArrow'
+        );
+
+
+        const dateGroups = document.querySelectorAll(
+            '.transaction-date-group'
+        );
+
+        const noFilterResult =
+            document.getElementById('noFilterResult');
+
+
+        /* =========================================================
+        CURRENT FILTER VALUES
+        ========================================================= */
+
+        let selectedMonth = 'all';
+        let selectedYear = 'all';
+
+
+        /* =========================================================
+        OPEN / CLOSE DROPDOWNS
+        ========================================================= */
+
+        function openDropdown(dropdown, arrow) {
+
+            dropdown.classList.remove('hidden');
+
+            arrow.classList.add('rotate-180');
+
+        }
+
+
+        function closeDropdown(dropdown, arrow) {
+
+            dropdown.classList.add('hidden');
+
+            arrow.classList.remove('rotate-180');
+
+        }
+
+
+        function toggleDropdown(dropdown, arrow) {
+
+            if (dropdown.classList.contains('hidden')) {
+
+                openDropdown(dropdown, arrow);
+
+            } else {
+
+                closeDropdown(dropdown, arrow);
+
             }
 
-
-            function filterTransactions() {
-
-                const selectedMonth = monthFilter.value;
-                const selectedYear = yearFilter.value;
-
-                let visibleGroups = 0;
+        }
 
 
-                dateGroups.forEach(function (group) {
+        /* =========================================================
+        MONTH BUTTON
+        ========================================================= */
 
-                    const groupMonth = group.dataset.month;
-                    const groupYear = group.dataset.year;
+        monthButton.addEventListener('click', function (event) {
 
+            event.stopPropagation();
 
-                    const monthMatches =
-                        selectedMonth === 'all' ||
-                        selectedMonth === groupMonth;
+            closeDropdown(yearDropdown, yearArrow);
 
-
-                    const yearMatches =
-                        selectedYear === 'all' ||
-                        selectedYear === groupYear;
-
-
-                    if (monthMatches && yearMatches) {
-
-                        group.classList.remove('hidden');
-
-                        visibleGroups++;
-
-                    } else {
-
-                        group.classList.add('hidden');
-
-                    }
-
-                });
-
-
-                if (visibleGroups === 0) {
-
-                    noFilterResult?.classList.remove('hidden');
-
-                } else {
-
-                    noFilterResult?.classList.add('hidden');
-
-                }
-
-            }
-
-
-            monthFilter.addEventListener(
-                'change',
-                filterTransactions
-            );
-
-            yearFilter.addEventListener(
-                'change',
-                filterTransactions
+            toggleDropdown(
+                monthDropdown,
+                monthArrow
             );
 
         });
+
+
+        /* =========================================================
+        YEAR BUTTON
+        ========================================================= */
+
+        yearButton.addEventListener('click', function (event) {
+
+            event.stopPropagation();
+
+            closeDropdown(monthDropdown, monthArrow);
+
+            toggleDropdown(
+                yearDropdown,
+                yearArrow
+            );
+
+        });
+
+
+        /* =========================================================
+        MONTH OPTIONS
+        ========================================================= */
+
+        document.querySelectorAll('.month-option')
+            .forEach(function (option) {
+
+                option.addEventListener('click', function () {
+
+                    selectedMonth =
+                        this.dataset.value;
+
+                    monthText.textContent =
+                        this.dataset.label;
+
+
+                    /* Highlight selected option */
+
+                    document.querySelectorAll('.month-option')
+                        .forEach(function (item) {
+
+                            item.classList.remove(
+                                'bg-[#F0F7FA]',
+                                'text-[#457B9D]',
+                                'font-semibold'
+                            );
+
+                        });
+
+
+                    this.classList.add(
+                        'bg-[#F0F7FA]',
+                        'text-[#457B9D]',
+                        'font-semibold'
+                    );
+
+
+                    closeDropdown(
+                        monthDropdown,
+                        monthArrow
+                    );
+
+
+                    filterTransactions();
+
+                });
+
+            });
+
+
+        /* =========================================================
+        YEAR OPTIONS
+        ========================================================= */
+
+        document.querySelectorAll('.year-option')
+            .forEach(function (option) {
+
+                option.addEventListener('click', function () {
+
+                    selectedYear =
+                        this.dataset.value;
+
+                    yearText.textContent =
+                        this.dataset.label;
+
+
+                    /* Highlight selected option */
+
+                    document.querySelectorAll('.year-option')
+                        .forEach(function (item) {
+
+                            item.classList.remove(
+                                'bg-[#F0F7FA]',
+                                'text-[#457B9D]',
+                                'font-semibold'
+                            );
+
+                        });
+
+
+                    this.classList.add(
+                        'bg-[#F0F7FA]',
+                        'text-[#457B9D]',
+                        'font-semibold'
+                    );
+
+
+                    closeDropdown(
+                        yearDropdown,
+                        yearArrow
+                    );
+
+
+                    filterTransactions();
+
+                });
+
+            });
+
+
+        /* =========================================================
+        FILTER TRANSACTIONS
+        ========================================================= */
+
+        function filterTransactions() {
+
+            let visibleGroups = 0;
+
+
+            dateGroups.forEach(function (group) {
+
+                const groupMonth =
+                    group.dataset.month;
+
+                const groupYear =
+                    group.dataset.year;
+
+
+                const monthMatches =
+                    selectedMonth === 'all' ||
+                    selectedMonth === groupMonth;
+
+
+                const yearMatches =
+                    selectedYear === 'all' ||
+                    selectedYear === groupYear;
+
+
+                if (monthMatches && yearMatches) {
+
+                    group.classList.remove('hidden');
+
+                    visibleGroups++;
+
+                } else {
+
+                    group.classList.add('hidden');
+
+                }
+
+            });
+
+
+            /* =====================================================
+            NO RESULT
+            ===================================================== */
+
+            if (visibleGroups === 0) {
+
+                noFilterResult?.classList.remove(
+                    'hidden'
+                );
+
+            } else {
+
+                noFilterResult?.classList.add(
+                    'hidden'
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+        CLOSE WHEN CLICKING OUTSIDE
+        ========================================================= */
+
+        document.addEventListener('click', function () {
+
+            closeDropdown(
+                monthDropdown,
+                monthArrow
+            );
+
+            closeDropdown(
+                yearDropdown,
+                yearArrow
+            );
+
+        });
+
+
+        /* Prevent dropdown itself from closing */
+
+        monthDropdown.addEventListener(
+            'click',
+            function (event) {
+
+                event.stopPropagation();
+
+            }
+        );
+
+
+        yearDropdown.addEventListener(
+            'click',
+            function (event) {
+
+                event.stopPropagation();
+
+            }
+        );
+
+    });
 
     </script>
 
