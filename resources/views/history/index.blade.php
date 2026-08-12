@@ -1,11 +1,5 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">
-            Transaction History
-        </h2>
-    </x-slot>
-
     @php
         $monthNames = [
             1 => 'Januari',

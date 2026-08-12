@@ -1,11 +1,5 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">
-            Accounts
-        </h2>
-    </x-slot>
-
     <div class="min-h-screen bg-[#F7F9FC] pb-10">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
 
