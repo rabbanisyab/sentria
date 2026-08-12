@@ -2,16 +2,11 @@
 
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800">
-            Transactions History
+            Transaction History
         </h2>
     </x-slot>
 
     @php
-        /*
-        |--------------------------------------------------------------------------
-        | Prepare transaction data
-        |--------------------------------------------------------------------------
-        */
 
         $monthNames = [
             1 => 'Januari',
@@ -28,163 +23,255 @@
             12 => 'Desember',
         ];
 
-        // Sort transaction by date
         $sortedTransactions = $transactions->sortByDesc('transaction_date');
 
-        // Group transaction by date
         $groupedTransactions = $sortedTransactions->groupBy(function ($transaction) {
             return \Carbon\Carbon::parse($transaction->transaction_date)->format('Y-m-d');
         });
 
-        // Get available years from transaction data
         $availableYears = $transactions
             ->map(function ($transaction) {
                 return \Carbon\Carbon::parse($transaction->transaction_date)->format('Y');
             })
             ->unique()
-            ->sort()
+            ->sortDesc()
             ->values();
+
     @endphp
 
 
-    <div class="min-h-screen bg-gray-50 pb-8">
+    <div class="min-h-screen bg-[#F8FAFC] pb-24">
 
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
-            {{-- ========================================================= --}}
-            {{-- PAGE TITLE --}}
-            {{-- ========================================================= --}}
+            {{-- ===================================================== --}}
+            {{-- PAGE HEADER --}}
+            {{-- ===================================================== --}}
 
-            <div class="mb-5 sm:mb-7">
+            <div class="mb-6 sm:mb-8">
 
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
-                    Transaction History
-                </h1>
+                <div class="flex items-center gap-3">
 
-                <p class="text-sm text-gray-500 mt-1">
-                    View your income, expenses, and transfers.
-                </p>
+                    {{-- Page Icon --}}
+                    <div class="w-11 h-11 sm:w-12 sm:h-12
+                                rounded-2xl
+                                bg-gradient-to-br from-[#457B9D] to-[#6C63FF]
+                                flex items-center justify-center
+                                shadow-sm">
 
-            </div>
+                        {{-- History / Clock Icon --}}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.7"
+                            stroke="currentColor"
+                            class="w-5 h-5 sm:w-6 sm:h-6 text-white">
 
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6v6l4 2" />
 
-            {{-- ========================================================= --}}
-            {{-- FILTER --}}
-            {{-- ========================================================= --}}
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="8.25" />
 
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-6">
-
-                <div class="grid grid-cols-2 gap-3">
-
-                    {{-- MONTH --}}
-                    <div>
-
-                        <label
-                            for="monthFilter"
-                            class="block text-xs font-medium text-gray-500 mb-1.5">
-                            Bulan
-                        </label>
-
-                        <div class="relative">
-
-                            <select
-                                id="monthFilter"
-                                class="w-full appearance-none rounded-xl
-                                       border border-gray-200
-                                       bg-gray-50
-                                       px-4 py-3 pr-10
-                                       text-sm font-medium text-gray-700
-                                       focus:border-[#457B9D]
-                                       focus:ring-2 focus:ring-[#457B9D]/20
-                                       focus:outline-none
-                                       transition">
-
-                                <option value="all">
-                                    Semua Bulan
-                                </option>
-
-                                @foreach($monthNames as $number => $name)
-                                    <option value="{{ $number }}">
-                                        {{ $name }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-
-                            {{-- Dropdown icon --}}
-                            <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="2"
-                                    stroke="currentColor"
-                                    class="w-4 h-4 text-gray-400">
-
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="m19 9-7 7-7-7" />
-
-                                </svg>
-                            </div>
-
-                        </div>
+                        </svg>
 
                     </div>
 
 
-                    {{-- YEAR --}}
+                    {{-- Title --}}
                     <div>
 
-                        <label
-                            for="yearFilter"
-                            class="block text-xs font-medium text-gray-500 mb-1.5">
-                            Tahun
-                        </label>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-[#1D3557]">
+                            Transaction History
+                        </h1>
 
-                        <div class="relative">
+                        <p class="text-sm text-gray-500 mt-0.5">
+                            View your income, expenses, and transfers.
+                        </p>
 
-                            <select
-                                id="yearFilter"
-                                class="w-full appearance-none rounded-xl
-                                       border border-gray-200
-                                       bg-gray-50
-                                       px-4 py-3 pr-10
-                                       text-sm font-medium text-gray-700
-                                       focus:border-[#457B9D]
-                                       focus:ring-2 focus:ring-[#457B9D]/20
-                                       focus:outline-none
-                                       transition">
+                    </div>
 
-                                <option value="all">
-                                    Semua Tahun
-                                </option>
+                </div>
 
-                                @foreach($availableYears as $year)
-                                    <option value="{{ $year }}">
-                                        {{ $year }}
+            </div>
+
+            {{-- ===================================================== --}}
+            {{-- FILTER CARD --}}
+            {{-- ===================================================== --}}
+
+            <div class="relative overflow-hidden
+                        bg-white
+                        rounded-2xl
+                        border border-gray-100
+                        shadow-sm
+                        mb-7">
+
+                {{-- Purple / Blue top accent --}}
+                <div class="h-1.5 bg-gradient-to-r
+                            from-[#457B9D]
+                            to-[#6C63FF]">
+                </div>
+
+                <div class="p-4 sm:p-5">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.7"
+                            stroke="currentColor"
+                            class="w-5 h-5 text-[#457B9D]">
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3 4.5h18M6 9h12M10 13.5h4M11 18h2" />
+
+                        </svg>
+
+                        <h2 class="font-semibold text-gray-800">
+                            Filter Transactions
+                        </h2>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {{-- MONTH --}}
+                        <div>
+
+                            <label
+                                for="monthFilter"
+                                class="block text-xs font-semibold text-gray-500 mb-1.5">
+                                Bulan
+                            </label>
+
+                            <div class="relative">
+
+                                <select
+                                    id="monthFilter"
+                                    class="w-full appearance-none
+                                           rounded-xl
+                                           border border-gray-200
+                                           bg-gray-50
+                                           px-4 py-3 pr-10
+                                           text-sm font-medium text-gray-700
+                                           transition
+                                           focus:border-[#457B9D]
+                                           focus:ring-2
+                                           focus:ring-[#457B9D]/20
+                                           focus:outline-none">
+
+                                    <option value="all">
+                                        Semua Bulan
                                     </option>
-                                @endforeach
 
-                            </select>
+                                    @foreach($monthNames as $number => $name)
 
-                            {{-- Dropdown icon --}}
-                            <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="2"
-                                    stroke="currentColor"
-                                    class="w-4 h-4 text-gray-400">
+                                        <option value="{{ $number }}">
+                                            {{ $name }}
+                                        </option>
 
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="m19 9-7 7-7-7" />
+                                    @endforeach
 
-                                </svg>
+                                </select>
+
+
+                                <div class="pointer-events-none
+                                            absolute inset-y-0 right-3
+                                            flex items-center">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        class="w-4 h-4 text-gray-400">
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m19 9-7 7-7-7" />
+
+                                    </svg>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- YEAR --}}
+                        <div>
+
+                            <label
+                                for="yearFilter"
+                                class="block text-xs font-semibold text-gray-500 mb-1.5">
+                                Tahun
+                            </label>
+
+                            <div class="relative">
+
+                                <select
+                                    id="yearFilter"
+                                    class="w-full appearance-none
+                                           rounded-xl
+                                           border border-gray-200
+                                           bg-gray-50
+                                           px-4 py-3 pr-10
+                                           text-sm font-medium text-gray-700
+                                           transition
+                                           focus:border-[#457B9D]
+                                           focus:ring-2
+                                           focus:ring-[#457B9D]/20
+                                           focus:outline-none">
+
+                                    <option value="all">
+                                        Semua Tahun
+                                    </option>
+
+                                    @foreach($availableYears as $year)
+
+                                        <option value="{{ $year }}">
+                                            {{ $year }}
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+
+
+                                <div class="pointer-events-none
+                                            absolute inset-y-0 right-3
+                                            flex items-center">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="2"
+                                        stroke="currentColor"
+                                        class="w-4 h-4 text-gray-400">
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m19 9-7 7-7-7" />
+
+                                    </svg>
+
+                                </div>
+
                             </div>
 
                         </div>
@@ -196,9 +283,9 @@
             </div>
 
 
-            {{-- ========================================================= --}}
+            {{-- ===================================================== --}}
             {{-- TRANSACTION LIST --}}
-            {{-- ========================================================= --}}
+            {{-- ===================================================== --}}
 
             @if($transactions->count() > 0)
 
@@ -207,7 +294,9 @@
                     @foreach($groupedTransactions as $date => $dateTransactions)
 
                         @php
+
                             $dateObject = \Carbon\Carbon::parse($date);
+
                             $day = $dateObject->format('d');
                             $month = (int) $dateObject->format('m');
                             $year = $dateObject->format('Y');
@@ -216,6 +305,7 @@
                                 $day . ' ' .
                                 $monthNames[$month] . ' ' .
                                 $year;
+
                         @endphp
 
 
@@ -225,20 +315,35 @@
                             data-month="{{ $month }}"
                             data-year="{{ $year }}">
 
-                            {{-- DATE --}}
+
+                            {{-- DATE HEADER --}}
                             <div class="flex items-center gap-3 mb-3">
 
-                                <h3 class="text-sm font-bold text-gray-700 whitespace-nowrap">
-                                    {{ $displayDate }}
-                                </h3>
+                                <div class="flex items-center gap-2 shrink-0">
+
+                                    <div class="w-2 h-2
+                                                rounded-full
+                                                bg-[#6C63FF]">
+                                    </div>
+
+                                    <h3 class="text-sm font-bold text-[#1D3557]">
+                                        {{ $displayDate }}
+                                    </h3>
+
+                                </div>
 
                                 <div class="h-px bg-gray-200 flex-1"></div>
 
                             </div>
 
 
-                            {{-- TRANSACTIONS --}}
-                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            {{-- TRANSACTIONS CARD --}}
+                            <div class="bg-white
+                                        rounded-2xl
+                                        border border-gray-100
+                                        shadow-sm
+                                        overflow-hidden">
+
 
                                 @foreach($dateTransactions as $index => $transaction)
 
@@ -246,45 +351,73 @@
                                         $isLast = $index === $dateTransactions->count() - 1;
                                     @endphp
 
-                                    <div class="transaction-item relative px-4 sm:px-5 py-4"
-                                         data-month="{{ $month }}"
-                                         data-year="{{ $year }}">
+
+                                    <div
+                                        class="transaction-item
+                                               relative
+                                               px-4 sm:px-5
+                                               py-4
+                                               transition
+                                               hover:bg-gray-50/70"
+                                        data-month="{{ $month }}"
+                                        data-year="{{ $year }}">
+
 
                                         <div class="flex items-start gap-3">
 
-                                            {{-- TIMELINE --}}
-                                            <div class="relative flex flex-col items-center pt-1">
 
-                                                {{-- Circle --}}
+                                            {{-- ================================================= --}}
+                                            {{-- TIMELINE --}}
+                                            {{-- ================================================= --}}
+
+                                            <div class="relative
+                                                        flex flex-col
+                                                        items-center
+                                                        pt-1
+                                                        shrink-0">
+
+
+                                                {{-- Timeline dot --}}
                                                 @if($transaction->type == 'income')
 
-                                                    <div class="w-3.5 h-3.5 rounded-full
-                                                                border-[3px] border-green-500
-                                                                bg-white z-10">
+                                                    <div class="w-3.5 h-3.5
+                                                                rounded-full
+                                                                border-[3px]
+                                                                border-green-500
+                                                                bg-white
+                                                                z-10">
                                                     </div>
 
                                                 @elseif($transaction->type == 'expense')
 
-                                                    <div class="w-3.5 h-3.5 rounded-full
-                                                                border-[3px] border-red-500
-                                                                bg-white z-10">
+                                                    <div class="w-3.5 h-3.5
+                                                                rounded-full
+                                                                border-[3px]
+                                                                border-red-500
+                                                                bg-white
+                                                                z-10">
                                                     </div>
 
                                                 @else
 
-                                                    <div class="w-3.5 h-3.5 rounded-full
-                                                                border-[3px] border-[#6C63FF]
-                                                                bg-white z-10">
+                                                    <div class="w-3.5 h-3.5
+                                                                rounded-full
+                                                                border-[3px]
+                                                                border-[#6C63FF]
+                                                                bg-white
+                                                                z-10">
                                                     </div>
 
                                                 @endif
 
 
-                                                {{-- Vertical line --}}
+                                                {{-- Timeline line --}}
                                                 @if(!$isLast)
 
-                                                    <div class="absolute top-4
-                                                                w-px h-full
+                                                    <div class="absolute
+                                                                top-4
+                                                                bottom-[-16px]
+                                                                w-px
                                                                 bg-gray-200">
                                                     </div>
 
@@ -293,23 +426,48 @@
                                             </div>
 
 
-                                            {{-- TRANSACTION CONTENT --}}
+                                            {{-- ================================================= --}}
+                                            {{-- CONTENT --}}
+                                            {{-- ================================================= --}}
+
                                             <div class="flex-1 min-w-0">
 
-                                                <div class="flex items-start justify-between gap-3">
+
+                                                <div class="flex
+                                                            items-start
+                                                            justify-between
+                                                            gap-3">
+
 
                                                     {{-- LEFT --}}
                                                     <div class="min-w-0">
 
+
                                                         @if($transaction->type == 'transfer')
 
-                                                            {{-- Transfer title --}}
-                                                            <h4 class="font-semibold text-gray-800 text-sm sm:text-base">
-                                                                Transfer
-                                                            </h4>
+                                                            {{-- Transfer --}}
+                                                            <div class="flex items-center gap-2">
 
-                                                            {{-- Account --}}
-                                                            <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                                                                <span class="inline-flex
+                                                                             items-center
+                                                                             rounded-full
+                                                                             bg-[#F0EFFF]
+                                                                             px-2.5 py-1
+                                                                             text-[11px]
+                                                                             font-semibold
+                                                                             text-[#6C63FF]">
+
+                                                                    Transfer
+
+                                                                </span>
+
+                                                            </div>
+
+
+                                                            <h4 class="font-semibold
+                                                                       text-gray-800
+                                                                       text-sm sm:text-base
+                                                                       mt-2">
 
                                                                 {{ $transaction->fromAccount?->name ?? '-' }}
 
@@ -319,12 +477,50 @@
 
                                                                 {{ $transaction->toAccount?->name ?? '-' }}
 
-                                                            </p>
+                                                            </h4>
+
 
                                                         @else
 
+                                                            {{-- Type Badge --}}
+                                                            @if($transaction->type == 'income')
+
+                                                                <span class="inline-flex
+                                                                             items-center
+                                                                             rounded-full
+                                                                             bg-green-50
+                                                                             px-2.5 py-1
+                                                                             text-[11px]
+                                                                             font-semibold
+                                                                             text-green-600">
+
+                                                                    Income
+
+                                                                </span>
+
+                                                            @else
+
+                                                                <span class="inline-flex
+                                                                             items-center
+                                                                             rounded-full
+                                                                             bg-red-50
+                                                                             px-2.5 py-1
+                                                                             text-[11px]
+                                                                             font-semibold
+                                                                             text-red-500">
+
+                                                                    Expense
+
+                                                                </span>
+
+                                                            @endif
+
+
                                                             {{-- Category --}}
-                                                            <h4 class="font-semibold text-gray-800 text-sm sm:text-base">
+                                                            <h4 class="font-semibold
+                                                                       text-gray-800
+                                                                       text-sm sm:text-base
+                                                                       mt-2">
 
                                                                 {{ $transaction->category?->name ?? ucfirst($transaction->type) }}
 
@@ -334,15 +530,22 @@
                                                             {{-- Description --}}
                                                             @if($transaction->description)
 
-                                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">
+                                                                <p class="text-xs sm:text-sm
+                                                                          text-gray-500
+                                                                          mt-1
+                                                                          leading-relaxed">
+
                                                                     {{ $transaction->description }}
+
                                                                 </p>
 
                                                             @endif
 
 
                                                             {{-- Account --}}
-                                                            <p class="text-xs text-gray-400 mt-1.5">
+                                                            <p class="text-xs
+                                                                      text-gray-400
+                                                                      mt-1.5">
 
                                                                 {{ $transaction->account?->name ?? '-' }}
 
@@ -353,41 +556,62 @@
                                                     </div>
 
 
-                                                    {{-- RIGHT : AMOUNT --}}
+                                                    {{-- ================================================= --}}
+                                                    {{-- AMOUNT --}}
+                                                    {{-- ================================================= --}}
+
                                                     <div class="text-right shrink-0">
+
 
                                                         @if($transaction->type == 'income')
 
-                                                            <p class="font-bold text-sm sm:text-base text-green-600 whitespace-nowrap">
+                                                            <p class="font-bold
+                                                                      text-sm sm:text-base
+                                                                      text-green-600
+                                                                      whitespace-nowrap">
 
-                                                                + Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                                                + Rp
+                                                                {{ number_format($transaction->amount, 0, ',', '.') }}
 
                                                             </p>
+
 
                                                         @elseif($transaction->type == 'expense')
 
-                                                            <p class="font-bold text-sm sm:text-base text-red-500 whitespace-nowrap">
+                                                            <p class="font-bold
+                                                                      text-sm sm:text-base
+                                                                      text-red-500
+                                                                      whitespace-nowrap">
 
-                                                                - Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                                                - Rp
+                                                                {{ number_format($transaction->amount, 0, ',', '.') }}
 
                                                             </p>
+
 
                                                         @else
 
-                                                            <p class="font-bold text-sm sm:text-base text-[#6C63FF] whitespace-nowrap">
+                                                            <p class="font-bold
+                                                                      text-sm sm:text-base
+                                                                      text-[#6C63FF]
+                                                                      whitespace-nowrap">
 
-                                                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                                                Rp
+                                                                {{ number_format($transaction->amount, 0, ',', '.') }}
 
                                                             </p>
 
 
-                                                            {{-- Admin Fee --}}
                                                             @if($transaction->admin_fee > 0)
 
-                                                                <p class="text-xs text-red-500 mt-1 whitespace-nowrap">
+                                                                <p class="text-[11px]
+                                                                          text-red-500
+                                                                          mt-1
+                                                                          whitespace-nowrap">
 
                                                                     Admin Fee
-                                                                    -Rp {{ number_format($transaction->admin_fee, 0, ',', '.') }}
+                                                                    -Rp
+                                                                    {{ number_format($transaction->admin_fee, 0, ',', '.') }}
 
                                                                 </p>
 
@@ -422,10 +646,21 @@
 
                 <div
                     id="noFilterResult"
-                    class="hidden bg-white rounded-2xl border border-gray-100 shadow-sm text-center py-12 px-5">
+                    class="hidden
+                           bg-white
+                           rounded-2xl
+                           border border-gray-100
+                           shadow-sm
+                           text-center
+                           py-14
+                           px-5">
 
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-gray-100
-                                flex items-center justify-center mb-4">
+                    <div class="w-14 h-14
+                                mx-auto
+                                rounded-2xl
+                                bg-[#F0EFFF]
+                                flex items-center justify-center
+                                mb-4">
 
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -433,7 +668,7 @@
                             viewBox="0 0 24 24"
                             stroke-width="1.7"
                             stroke="currentColor"
-                            class="w-7 h-7 text-gray-400">
+                            class="w-7 h-7 text-[#6C63FF]">
 
                             <path
                                 stroke-linecap="round"
@@ -449,6 +684,7 @@
 
                     </div>
 
+
                     <h4 class="font-semibold text-gray-800">
                         No transactions found
                     </h4>
@@ -459,20 +695,37 @@
 
                 </div>
 
+
             @else
 
                 {{-- ===================================================== --}}
                 {{-- EMPTY STATE --}}
                 {{-- ===================================================== --}}
 
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div class="bg-white
+                            rounded-2xl
+                            border border-gray-100
+                            shadow-sm
+                            overflow-hidden">
 
-                    <div class="text-center py-14 sm:py-16 px-5">
+                    {{-- Accent --}}
+                    <div class="h-1.5 bg-gradient-to-r
+                                from-[#457B9D]
+                                to-[#6C63FF]">
+                    </div>
 
-                        <div class="w-16 h-16 mx-auto rounded-2xl
+
+                    <div class="text-center
+                                py-16
+                                px-5">
+
+                        <div class="w-16 h-16
+                                    mx-auto
+                                    rounded-2xl
                                     bg-[#F0EFFF]
                                     text-[#6C63FF]
-                                    flex items-center justify-center mb-5">
+                                    flex items-center justify-center
+                                    mb-5">
 
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -496,12 +749,19 @@
 
                         </div>
 
+
                         <h4 class="text-lg font-semibold text-gray-800">
                             No transactions yet
                         </h4>
 
-                        <p class="text-sm text-gray-500 mt-2 max-w-sm mx-auto">
-                            Start recording your income, expenses, and transfers.
+                        <p class="text-sm text-gray-500
+                                  mt-2
+                                  max-w-sm
+                                  mx-auto">
+
+                            Start recording your income,
+                            expenses, and transfers.
+
                         </p>
 
                     </div>
@@ -511,13 +771,14 @@
             @endif
 
 
-            {{-- ========================================================= --}}
+            {{-- ===================================================== --}}
             {{-- SUCCESS MESSAGE --}}
-            {{-- ========================================================= --}}
+            {{-- ===================================================== --}}
 
             @if(session('success'))
 
-                <div class="mt-5 rounded-xl
+                <div class="mt-5
+                            rounded-xl
                             border border-green-100
                             bg-green-50
                             px-4 py-3
@@ -534,9 +795,9 @@
     </div>
 
 
-    {{-- ================================================================ --}}
+    {{-- ============================================================= --}}
     {{-- FILTER SCRIPT --}}
-    {{-- ================================================================ --}}
+    {{-- ============================================================= --}}
 
     <script>
 
@@ -545,8 +806,13 @@
             const monthFilter = document.getElementById('monthFilter');
             const yearFilter = document.getElementById('yearFilter');
 
-            const dateGroups = document.querySelectorAll('.transaction-date-group');
-            const noFilterResult = document.getElementById('noFilterResult');
+            const dateGroups = document.querySelectorAll(
+                '.transaction-date-group'
+            );
+
+            const noFilterResult =
+                document.getElementById('noFilterResult');
+
 
             if (!monthFilter || !yearFilter) {
                 return;
@@ -592,22 +858,28 @@
                 });
 
 
-                // Show empty state if there are no results
                 if (visibleGroups === 0) {
 
-                    noFilterResult.classList.remove('hidden');
+                    noFilterResult?.classList.remove('hidden');
 
                 } else {
 
-                    noFilterResult.classList.add('hidden');
+                    noFilterResult?.classList.add('hidden');
 
                 }
 
             }
 
 
-            monthFilter.addEventListener('change', filterTransactions);
-            yearFilter.addEventListener('change', filterTransactions);
+            monthFilter.addEventListener(
+                'change',
+                filterTransactions
+            );
+
+            yearFilter.addEventListener(
+                'change',
+                filterTransactions
+            );
 
         });
 
