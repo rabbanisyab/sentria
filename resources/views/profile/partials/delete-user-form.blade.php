@@ -4,12 +4,7 @@
     <div class="mb-5">
         <div class="flex items-center gap-3">
 
-            <div class="w-10 h-10
-                        shrink-0
-                        rounded-xl
-                        bg-red-50
-                        text-red-500
-                        flex items-center justify-center">
+            <div class="w-10 h-10 shrink-0 rounded-xl bg-red-50 text-red-500flex items-center justify-center">
 
                 <svg xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -53,11 +48,7 @@
 
 
     {{-- Card --}}
-    <div class="bg-white
-                rounded-2xl
-                shadow-sm
-                border border-red-100
-                overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden">
 
         <div class="h-1 w-full bg-red-500"></div>
 
@@ -72,17 +63,8 @@
                 type="button"
                 x-data=""
                 x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-                class="w-full
-                       py-3
-                       rounded-xl
-                       bg-red-500
-                       hover:bg-red-600
-                       text-white
-                       text-sm
-                       font-semibold
-                       shadow-sm
-                       hover:shadow-md
-                       transition">
+                class="w-full py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white
+                       text-sm font-semibold shadow-sm hover:shadow-md transition">
 
                 {{ __('Delete Account') }}
 
